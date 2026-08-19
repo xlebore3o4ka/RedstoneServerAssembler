@@ -1,5 +1,5 @@
 import cliprompts
-import std/[os, osproc, parsecfg, streams, httpclient, json, sequtils, strformat, tables, strutils, terminal]
+import std/[os, osproc, parsecfg, streams, httpclient, json, sequtils, strformat, tables, strutils]
 
 type
   CoreEnum = enum
@@ -89,26 +89,12 @@ proc downloadFabricLoader*(gameVersion: string, loaderVersion: string, installer
     client.close()
 
 proc setupServer(filename: string) =
-  var p = startProcess("java", args = ["-jar", filename], options = {poUsePath})
-  
-  let outputStream = p.outputStream()
-  
   info(&"Downloading server from {filename}")
-  continuing("")
-  while p.running() or not outputStream.atEnd():
-    if not outputStream.atEnd():
-      let line = outputStream.readLine()
-      if line.len > 0:
-        cursorUp(1)
-        let pos = getCursorPos()
-        eraseLine()
-
-        continuing(if line.len > 100: line[0..99] & " [message is too long]" else: line)
-
-        setCursorPos(0, pos.y)
-    sleep(10)
-  
-  p.close()
+  let (_, exitcode) = execCmdEx(&"java -jar {filename}")
+  if exitcode != 0:
+    error(&"The server download completed with exit code: {exitcode}")
+    quit(exitcode)
+  success("The server download completed successfully")
 
 let output = execProcess("nimble dump")
 let config = output.newStringStream().loadConfig()
@@ -148,7 +134,7 @@ of ceFabric:
 
 var loaderVersion: string 
 if installerStable.len > 1:
-  loaderVersion = loaderStable[promptSearch("Loader version:", installerStable)]
+  loaderVersion = loaderStable[promptSearch("Loader version:", loaderStable)]
 else:
   loaderVersion = loaderStable[0]
   prompt("Loader version:")
@@ -161,6 +147,61 @@ else:
   installerVersion = installerStable[0]
   prompt("Installer version:")
   answer(&"{installerVersion} [only available]")
+
+# Pre-congiguration
+
+type
+  GameModeKind   = enum
+    gmkSurvival  = "survival"
+    gmkCreative  = "creative"
+    gmkAdventure = "adventure"
+
+  DifficultyKind = enum
+    dkPeaceful   = "peaceful"
+    dkEasy       = "easy"
+    dkNormal     = "normal"
+    dkHard       = "hard"
+
+  PreConfig   =         object
+    serverPort:         int            = 25565
+    serverIp:           string         # no default
+    maxPlayers:         int            = 20
+    motd:               string         = "A RedstoneServerAssembled Minecraft Server"
+    onlineMode:         bool           = false
+    whiteList:          bool           = false
+    gamemode:           GameModeKind   = gmkSurvival
+    difficulty:         DifficultyKind = dkNormal
+    levelName:          string         = "world"
+    simulationDistance: int            = 10
+    viewDistance:       int            = 10
+    spawnProtection:    Natural        = 16
+    opPermissionLevel:  Natural        = 4
+    generateStructures: bool           = true
+    levelType:          string         # no default
+    allowFlight:        bool           = false
+
+let doPreconfig = promptBool("Pre-configure the server?", default = true)
+
+var preConfig = PreConfig()
+
+if doPreconfig:
+  preConfig.serverPort         = promptInt(    "[server-port] Enter server port",                  default = preConfig.serverPort )
+  preConfig.serverIp           = promptString( "[server-ip] Enter IP address",                     default = "leave it as it is")
+  preConfig.maxPlayers         = promptInt(    "[max-players] Enter max players",                  default = preConfig.maxPlayers )
+  preConfig.motd               = promptString( "[motd] Enter MOTD",                                default = preConfig.motd )
+  preConfig.onlineMode         = promptBool(   "[online-mode] Enable online mode?",                default = preConfig.onlineMode )
+  preConfig.whiteList          = promptBool(   "[white-list] Enable whitelist?",                   default = preConfig.whiteList )
+  preConfig.gamemode           = promptEnum(   "[gamemode] Select gamemode",                       default = preConfig.gamemode )
+  preConfig.difficulty         = promptEnum(   "[difficulty] Select difficulty",                   default = preConfig.difficulty )
+  preConfig.levelName          = promptString( "[level-name] Enter level name",                    default = preConfig.levelName )
+  preConfig.viewDistance       = promptInt(    "[view-distance] Enter view distance",              default = preConfig.viewDistance )
+  preConfig.simulationDistance = promptInt(    "[simulation-distance] Enter simulation distance",  default = preConfig.simulationDistance )
+  preConfig.spawnProtection    = promptInt(    "[spawn-protection] Enter spawn protection radius", default = preConfig.spawnProtection )
+  preConfig.opPermissionLevel  = promptInt(    "[op-permission-level] Enter OP permission level",  default = preConfig.opPermissionLevel )
+  preConfig.generateStructures = promptBool(   "[generate-structures] Generate structures?",       default = preConfig.generateStructures )
+  preConfig.levelType          = promptString( "[level-type] Enter level type",                    default = "leave it as it is")
+  preConfig.allowFlight        = promptBool(   "[allow-flight] Allow flight?",                     default = preConfig.allowFlight )
+
 
 # Setup server
 
@@ -177,5 +218,5 @@ if not fileExists("eula.txt"):
 
 # By using the program, you are indicating your agreement to minecraft EULA (https://aka.ms/MinecraftEULA)
 writeFile("eula.txt", readFile("eula.txt").replace("false", "true"))
-success("Agreement with the EULA")
 hint("By using the program, you are indicating your agreement to minecraft EULA (https://aka.ms/MinecraftEULA)")
+success("Agreement with the EULA")
