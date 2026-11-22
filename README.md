@@ -9,8 +9,7 @@ guided dialogue or completely non-interactively with command-line flags.
 - **Fabric, NeoForge and Forge** out of the box.
 - **Any other loader or server software** can be added with a JSON definition — no
   recompilation and no engine changes.
-- **Pre-configuration is actually written** to `server.properties` (the old
-  `PreConfig` values used to be collected and thrown away).
+- **Pre-configuration is written** to `server.properties`.
 - **EULA and start script** are handled for you.
 - **Two modes:** an interactive dialogue and a flags-only mode for scripts and CI.
 
