@@ -169,6 +169,9 @@ Boolean options can be written in three ways:
 The same `--no-…` form works for `--whitelist`, `--generate-structures` and
 `--allow-flight`.
 
+Every option that takes a value also accepts the `--option=value` form, for
+example `--mc-version=1.21.1` or `--motd=My server`.
+
 ## What gets installed
 
 After a successful run the target directory contains the server and:
