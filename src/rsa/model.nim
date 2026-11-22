@@ -44,7 +44,6 @@ type
     overwrite*: bool
     onlyIfExists*: bool
     optional*: bool
-    executable*: bool
 
   LoaderDef* = object
     id*: string
@@ -197,7 +196,6 @@ proc parseStep*(node: JsonNode): ScenarioStep =
   result.overwrite = node.boolOf("overwrite", true)
   result.onlyIfExists = node.boolOf("onlyIfExists", true)
   result.optional = node.boolOf("optional", false)
-  result.executable = node.boolOf("executable", false)
 
 proc validate*(loader: LoaderDef) =
   if loader.id.len == 0:

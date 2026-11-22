@@ -242,6 +242,3 @@ proc fileBaseName*(path: string): string =
     result = result[slash + 1 .. ^1]
   if result.len == 0:
     result = "download"
-
-proc withTrailingSlash*(path: string): string =
-  if path.len == 0 or path[^1] in {'/', '\\'}: path else: path & '/'
