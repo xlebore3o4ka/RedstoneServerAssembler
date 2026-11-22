@@ -1,0 +1,45 @@
+{
+  "id": "neoforge",
+  "name": "NeoForge",
+  "description": "Community fork of Forge with a modern modding API.",
+  "website": "https://neoforged.net",
+  "javaVersion": "21",
+  "gameVersions": {
+    "kind": "maven",
+    "url": "https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge",
+    "exclude": "-(beta|alpha)|\\+",
+    "deriveMc": {
+      "type": "neoforge-mc"
+    }
+  },
+  "loaderVersions": {
+    "kind": "maven",
+    "url": "https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge",
+    "exclude": "-(beta|alpha)|\\+",
+    "prefixFromMc": {
+      "type": "neoforge-prefix"
+    }
+  },
+  "scenario": [
+    {
+      "type": "download",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/{loader}/neoforge-{loader}-installer.jar",
+      "file": "neoforge-{loader}-installer.jar"
+    },
+    {
+      "type": "run",
+      "command": "java -jar \"{file}\" --installServer"
+    },
+    {
+      "type": "write",
+      "file": "user_jvm_args.txt",
+      "overwrite": false,
+      "content": "-Xms2G\n-Xmx6G\n"
+    },
+    {
+      "type": "require",
+      "file": "run.sh"
+    }
+  ],
+  "launch": "./run.sh nogui"
+}

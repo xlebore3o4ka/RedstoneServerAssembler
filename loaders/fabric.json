@@ -1,0 +1,30 @@
+{
+  "id": "fabric",
+  "name": "Fabric",
+  "description": "Lightweight and fast mod loader for modern Minecraft.",
+  "website": "https://fabricmc.net",
+  "javaVersion": "21",
+  "gameVersions": {
+    "kind": "mojang",
+    "url": "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+    "releaseTypes": ["release"]
+  },
+  "loaderVersions": {
+    "kind": "json",
+    "url": "https://meta.fabricmc.net/v2/versions/loader/{mc}",
+    "versionPath": "loader.version"
+  },
+  "installerVersions": {
+    "kind": "json",
+    "url": "https://meta.fabricmc.net/v2/versions/installer",
+    "versionPath": "version"
+  },
+  "scenario": [
+    {
+      "type": "download",
+      "url": "https://meta.fabricmc.net/v2/versions/loader/{mc}/{loader}/{installer}/server/jar",
+      "file": "fabric-server-mc-{mc}-loader-{loader}-launcher-{installer}.jar"
+    }
+  ],
+  "launch": "java -jar \"{file}\" nogui"
+}

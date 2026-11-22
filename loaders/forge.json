@@ -1,0 +1,46 @@
+{
+  "id": "forge",
+  "name": "Forge",
+  "description": "The classic Minecraft mod loader.",
+  "website": "https://minecraftforge.net",
+  "javaVersion": "21",
+  "gameVersions": {
+    "kind": "maven-xml",
+    "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml",
+    "exclude": "-beta$",
+    "deriveMc": {
+      "type": "regex",
+      "pattern": "^([^-]+)-.*$",
+      "replacement": "$1"
+    }
+  },
+  "loaderVersions": {
+    "kind": "maven-xml",
+    "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml",
+    "prefix": "{mc}-",
+    "stripPrefix": true,
+    "exclude": "-beta$"
+  },
+  "scenario": [
+    {
+      "type": "download",
+      "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/{mc}-{loader}/forge-{mc}-{loader}-installer.jar",
+      "file": "forge-{mc}-{loader}-installer.jar"
+    },
+    {
+      "type": "run",
+      "command": "java -jar \"{file}\" --installServer"
+    },
+    {
+      "type": "write",
+      "file": "user_jvm_args.txt",
+      "overwrite": false,
+      "content": "-Xms2G\n-Xmx6G\n"
+    },
+    {
+      "type": "require",
+      "file": "run.sh"
+    }
+  ],
+  "launch": "./run.sh nogui"
+}
