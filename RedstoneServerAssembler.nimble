@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "xlebore3o4ka"
 description   = "The interactive CLI that automates Minecraft server setup — core, version, config, EULA, path, all in one dialog."
 license       = "LGPL-3.0-only"
